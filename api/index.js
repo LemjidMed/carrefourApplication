@@ -15,7 +15,7 @@ const jsBundle = readFileSync(path.join(webDist, 'app.js'), 'utf8').catch(() => 
 const cssBundle = readFileSync(path.join(webDist, 'app.css'), 'utf8').catch(() => '');
 
 // MCP metadata
-app.get('/api/mcp/metadata', (_req, res) => {
+app.get(['/mcp/metadata', '/api/mcp/metadata'], (_req, res) => {
   res.json({
     schema_version: 'v1',
     name: 'Carrefour ChatGPT App',
@@ -24,12 +24,27 @@ app.get('/api/mcp/metadata', (_req, res) => {
     api: {
       url: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
       endpoints: ['mcp/metadata', 'mcp/open', 'mcp/execute']
+    },
+    ui: {
+      type: 'web',
+      url: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
+    }
+  });
+});
+
+// MCP open
+app.post(['/mcp/open', '/api/mcp/open'], (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      message: 'MCP Open OK',
+      context: req.body.context || null
     }
   });
 });
 
 // MCP execute
-app.post('/api/mcp/execute', (req, res) => {
+app.post(['/mcp/execute', '/api/mcp/execute'], (req, res) => {
   const { action, input } = req.body;
   if (action !== 'send_message') {
     return res.status(400).json({ success: false, error: 'Action not supported' });
