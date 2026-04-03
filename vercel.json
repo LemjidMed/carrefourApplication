@@ -6,12 +6,16 @@
   },
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api"
+      "source": "/mcp/:path*",
+      "destination": "/api/mcp/:path*"
     },
     {
-      "source": "/:path*",
-      "destination": "/api"
+      "source": "/mcp",
+      "destination": "/api/mcp"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     }
   ]
 }
