@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "web:dev": "cd web && npx vite",
-    "web:build": "cd web && npx vite build",
+    "web:build": "cd web && npm install && npx vite build",
     "web:preview": "cd web && npx vite preview",
+    "build": "npm run web:build",
     "server:dev": "npx ts-node-esm server/src/index.ts",
     "server:start": "node --loader ts-node/esm server/src/index.ts",
-    "start": "npm run web:build && npm run server:start",
-    "build": "npm run web:build"
+    "start": "npm run web:build && npm run server:start"
   },
   "dependencies": {
     "express": "^4.18.2",
