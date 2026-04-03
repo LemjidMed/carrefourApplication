@@ -1,0 +1,28 @@
+{
+  "name": "chatgpt-app-carrefour",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "web:dev": "cd web && vite",
+    "web:build": "cd web && vite build",
+    "web:preview": "cd web && vite preview",
+    "server:dev": "npx ts-node-esm server/src/index.ts",
+    "server:start": "node --loader ts-node/esm server/src/index.ts",
+    "start": "npm run web:build && npm run server:start"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.18",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.4.0"
+  }
+}
