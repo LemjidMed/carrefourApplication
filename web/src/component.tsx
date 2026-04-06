@@ -34,7 +34,7 @@ function App() {
     setStatus('Envoi au MCP...');
 
     try {
-      const res = await fetch('/mcp/execute', {
+      const res = await fetch('/api/mcp/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'send_message', input: { text: input } })
