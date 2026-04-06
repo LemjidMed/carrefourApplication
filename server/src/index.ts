@@ -10,10 +10,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const webDist = path.join(__dirname, '../../web/dist');
 
+let jsBundle = '';
+let cssBundle = '';
+
+try {
+  jsBundle = readFileSync(path.join(webDist, 'app.js'), 'utf8');
+} catch (error) {
+  console.warn('Warning: web dist app.js not found, MCP resource will return empty script', error);
+}
+
+try {
+  cssBundle = readFileSync(path.join(webDist, 'app.css'), 'utf8');
+} catch (error) {
+  console.warn('Warning: web dist app.css not found, MCP resource will return empty styles', error);
+}
+
 app.use(express.json());
 
 // MCP metadata
-app.get('/mcp/metadata', (_req, res) => {
+app.get(['/mcp/metadata', '/api/mcp/metadata'], (_req, res) => {
   res.json({
     schema_version: 'v1',
     name: 'Carrefour ChatGPT App exemple',
@@ -33,7 +48,7 @@ app.get('/mcp/metadata', (_req, res) => {
 });
 
 // MCP open
-app.post('/mcp/open', (req, res) => {
+app.post(['/mcp/open', '/api/mcp/open'], (req, res) => {
   res.json({
     success: true,
     data: {
@@ -44,7 +59,7 @@ app.post('/mcp/open', (req, res) => {
 });
 
 // MCP execute (tool call)
-app.post('/mcp/execute', async (req, res) => {
+app.post(['/mcp/execute', '/api/mcp/execute'], async (req, res) => {
   const { action, input } = req.body;
 
   if (!action || action !== 'send_message') {
@@ -67,7 +82,7 @@ app.post('/mcp/execute', async (req, res) => {
 });
 
 // MCP resource (widget HTML)
-app.get('/mcp/resource/carrefour-widget', (_req, res) => {
+app.get(['/mcp/resource/carrefour-widget', '/api/mcp/resource/carrefour-widget'], (_req, res) => {
   const html = `
 <div id="root"></div>
 <style>${cssBundle}</style>
@@ -79,7 +94,7 @@ app.get('/mcp/resource/carrefour-widget', (_req, res) => {
 });
 
 // MCP tool list
-app.get('/mcp/tools', (_req, res) => {
+app.get(['/mcp/tools', '/api/mcp/tools'], (_req, res) => {
   res.json({
     tools: [
       {
