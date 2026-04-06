@@ -11,8 +11,18 @@ const app = express();
 app.use(express.json());
 
 // Read bundles
-const jsBundle = readFileSync(path.join(webDist, 'app.js'), 'utf8').catch(() => '');
-const cssBundle = readFileSync(path.join(webDist, 'app.css'), 'utf8').catch(() => '');
+let jsBundle = '';
+let cssBundle = '';
+try {
+  jsBundle = readFileSync(path.join(webDist, 'app.js'), 'utf8');
+} catch (error) {
+  console.warn('Warning: web/dist/app.js not found', error.message);
+}
+try {
+  cssBundle = readFileSync(path.join(webDist, 'app.css'), 'utf8');
+} catch (error) {
+  console.warn('Warning: web/dist/app.css not found', error.message);
+}
 
 // MCP metadata
 app.get(['/mcp/metadata', '/api/mcp/metadata'], (_req, res) => {
@@ -22,8 +32,8 @@ app.get(['/mcp/metadata', '/api/mcp/metadata'], (_req, res) => {
     description: 'MCP server pour OpenAI Apps SDK',
     auth: { type: 'none' },
     api: {
-      url: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
-      endpoints: ['mcp/metadata', 'mcp/open', 'mcp/execute']
+      url: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/mcp` : 'http://localhost:3000/mcp',
+      endpoints: ['metadata', 'open', 'execute']
     },
     ui: {
       type: 'web',
@@ -57,6 +67,19 @@ app.post(['/mcp/execute', '/api/mcp/execute'], (req, res) => {
       timestamp: new Date().toISOString()
     }
   });
+});
+
+// MCP challenge verification
+app.get('/.well-known/openai-apps-challenge', (_req, res) => {
+  const challengePath = path.join(__dirname, '../../.well-known/openai-apps-challenge');
+  let token = process.env.OPENAI_APPS_CHALLENGE || '';
+  try {
+    const fileValue = readFileSync(challengePath, 'utf8').trim();
+    if (fileValue) token = fileValue;
+  } catch (error) {
+    // ignore if file not found
+  }
+  res.type('text').send(token);
 });
 
 // Static files
